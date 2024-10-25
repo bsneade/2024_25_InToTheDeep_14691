@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.drive;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.TRACK_WIDTH;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -78,6 +79,12 @@ public class GoBildaPinpointLocalizer extends TwoTrackingWheelLocalizer {
     @Override
     public double getHeading() {
         return odo.getHeading();
+    }
+
+    @Nullable
+    @Override
+    public Double getHeadingVelocity() {
+        return odo.getHeadingVelocity();
     }
 
     @Override
