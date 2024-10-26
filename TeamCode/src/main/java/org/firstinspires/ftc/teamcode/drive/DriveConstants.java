@@ -88,10 +88,18 @@ public class DriveConstants {
      * You are free to raise this on your own if you would like. It is best determined through experimentation.
 
      */
-    public static double MAX_VEL = 52.48291908330528;
-    public static double MAX_ACCEL = 52.48291908330528;
-    public static double MAX_ANG_VEL = Math.toRadians(207.3827420689655);
-    public static double MAX_ANG_ACCEL = Math.toRadians(207.3827420689655);
+    public static double MAX_VEL = //52.48291908330528;
+            ((MAX_RPM / 60) //to get seconds
+                    * GEAR_RATIO * WHEEL_RADIUS * 2 * Math.PI)  // wheel rotation to linear
+                    * 0.85; //safety buffer
+    public static double MAX_ACCEL = //52.48291908330528;
+            MAX_VEL * 0.85; //use some percentage of our max velocity
+    public static double MAX_ANG_VEL = // Math.toRadians(207.3827420689655);
+            Math.toRadians(
+              MAX_VEL / TRACK_WIDTH * (180 / Math.PI)
+            );
+    public static double MAX_ANG_ACCEL = //Math.toRadians(207.3827420689655);
+            MAX_ANG_VEL;
 
     public static RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR =
             RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
