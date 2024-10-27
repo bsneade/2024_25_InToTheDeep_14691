@@ -27,8 +27,8 @@ public class GoBildaPinpointLocalizer extends TwoTrackingWheelLocalizer {
 
     // These are set from running the LocalizationTest
     // See https://learnroadrunner.com/dead-wheels.html#tuning-two-wheel
-    public static double X_MULTIPLIER = 1; // Multiplier in the X direction
-    public static double Y_MULTIPLIER = 1; // Multiplier in the Y direction
+    public static double X_MULTIPLIER = 72/72.4807; // Multiplier in the X direction
+    public static double Y_MULTIPLIER = 120/120.64; // Multiplier in the Y direction
 
     private GoBildaPinpointDriver odo = null;
     private MecanumDrive drive;
