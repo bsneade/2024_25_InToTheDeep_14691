@@ -18,10 +18,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class GoBildaPinpointLocalizer extends TwoTrackingWheelLocalizer {
-    private static final double IN_TO_MM = 24.5; // 1 inch = 25.4 mm
 
-    public static final double OFFSET_X = -4 * IN_TO_MM; //mm; X is the up and down direction
-    public static final double OFFSET_Y = 1 * (TRACK_WIDTH / 2) - 2.25 * IN_TO_MM; //mm; Y is the strafe direction
+    public static final double OFFSET_X = -4 * DriveConstants.IN_TO_MM; //mm; X is the up and down direction
+    public static final double OFFSET_Y = 1 * (TRACK_WIDTH / 2) - 2.25 * DriveConstants.IN_TO_MM; //mm; Y is the strafe direction
 
     public static final double PERPENDICULAR_X = 0;
     public static final double PERPENDICULAR_Y = 0;
