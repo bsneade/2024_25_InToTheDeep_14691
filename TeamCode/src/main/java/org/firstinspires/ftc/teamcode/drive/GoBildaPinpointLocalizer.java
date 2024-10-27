@@ -27,8 +27,8 @@ public class GoBildaPinpointLocalizer extends TwoTrackingWheelLocalizer {
 
     // These are set from running the LocalizationTest
     // See https://learnroadrunner.com/dead-wheels.html#tuning-two-wheel
-    public static double X_MULTIPLIER = 0.9915; // Multiplier in the X direction
-    public static double Y_MULTIPLIER = 1.00544375; // Multiplier in the Y direction
+    public static double X_MULTIPLIER = 1; // Multiplier in the X direction
+    public static double Y_MULTIPLIER = 1; // Multiplier in the Y direction
 
     private GoBildaPinpointDriver odo = null;
     private MecanumDrive drive;
@@ -42,6 +42,10 @@ public class GoBildaPinpointLocalizer extends TwoTrackingWheelLocalizer {
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
         odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
+
+        if (odo == null) {
+            throw new IllegalStateException("Could not find the odo driver, check config");
+        }
         odo.setOffsets(OFFSET_X, OFFSET_Y);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
