@@ -28,13 +28,20 @@ import com.qualcomm.hardware.lynx.LynxI2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchDevice;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchSimple;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.configuration.annotations.DeviceProperties;
 import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
 import com.qualcomm.robotcore.util.TypeConversion;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -48,7 +55,7 @@ import java.util.Arrays;
         description ="goBILDA® Pinpoint Odometry Computer (IMU Sensor Fusion for 2 Wheel Odometry)"
         )
 
-public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSimple> {
+public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSimple> implements IMU {
 
     private int deviceStatus   = 0;
     private int loopTime       = 0;
@@ -91,6 +98,40 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
         return "goBILDA® Pinpoint Odometry Computer";
     }
 
+    /**
+     * Not implemented, so returns false for unsuccessful initialization
+     * @param parameters
+     * @return
+     */
+    @Override
+    public boolean initialize(Parameters parameters) {
+        return false;
+    }
+
+    @Override
+    public void resetYaw() {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public YawPitchRollAngles getRobotYawPitchRollAngles() {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public Orientation getRobotOrientation(AxesReference reference, AxesOrder order, AngleUnit angleUnit) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public Quaternion getRobotOrientationAsQuaternion() {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public AngularVelocity getRobotAngularVelocity(AngleUnit angleUnit) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
 
     //Register map of the i2c device
     private enum Register {

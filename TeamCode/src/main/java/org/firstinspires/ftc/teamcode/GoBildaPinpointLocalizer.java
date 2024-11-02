@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.teamcode.messages.GoBildaPinpointInputsMessage;
 
 public class GoBildaPinpointLocalizer implements Localizer {
 
@@ -58,8 +59,8 @@ public class GoBildaPinpointLocalizer implements Localizer {
         Double heading = driver.getHeading();
         double headingVelocity = driver.getHeadingVelocity();
 
-        //FIXME - update the flight recorder
-//        FlightRecorder.write("TWO_DEAD_WHEEL_INPUTS", new TwoDeadWheelInputsMessage(parPosVel, perpPosVel, angles, angularVelocity));
+        //update the flight recorder
+        FlightRecorder.write("GOBILDA_PINPOINT_INPUTS", new GoBildaPinpointInputsMessage(position, velocity, heading, headingVelocity));
 
         //check if we have run before and have our last values
         if (lastPosition == null || lastVelocity == null || lastHeading == null) {
