@@ -9,8 +9,11 @@ public class Arm extends LinearOpMode {
 
     private DcMotor armViper = null;
     private DcMotor armLift= null;
+
     //TODO SET THIS VALUE
     public static final double VIPER_LIMIT = 100;
+    public static final int VIPER_HOLD_POWER = 0;
+
     DigitalChannel digitalTouch;  // Digital channel Object
 
     @Override
@@ -48,7 +51,7 @@ public class Arm extends LinearOpMode {
 
             // End limit hit, set power to 0
             if (armViper.getCurrentPosition() - viperStartPosition >= VIPER_LIMIT) {
-                armViperPower = 0;
+                armViperPower = VIPER_HOLD_POWER;
                 telemetry.addData("Viper End Limit", "Activated");
             } else {
                 telemetry.addData("Viper End Limit", "Inactive");
