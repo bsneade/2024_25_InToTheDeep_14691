@@ -9,7 +9,8 @@ public class Arm extends LinearOpMode {
 
     private DcMotor armViper = null;
     private DcMotor armLift= null;
-
+    //TODO SET THIS VALUE
+    public static final double VIPER_LIMIT = 100;
     DigitalChannel digitalTouch;  // Digital channel Object
 
     @Override
@@ -31,6 +32,9 @@ public class Arm extends LinearOpMode {
         telemetry.addData("Arm Lift Status", "initialized");
         telemetry.update();
 
+        // keep track of the viper motor 'start' position so we can calc the end position correctly
+        Integer viperStartPosition = null;
+
         // Waiting for start
         waitForStart();
 
@@ -39,13 +43,25 @@ public class Arm extends LinearOpMode {
             double armLiftPower = gamepad2.left_stick_y;
             double armViperPower = gamepad2.right_stick_y;
 
-            // button is pressed set power =0
+            // Send telemetry message to indicate successful Encoder reset
+            telemetry.addData("Viper End Limit",  armViper.getCurrentPosition());
 
-            if (digitalTouch.getState() == true) {
+            // End limit hit, set power to 0
+            if (armViper.getCurrentPosition() - viperStartPosition >= VIPER_LIMIT) {
                 armViperPower = 0;
-                telemetry.addData("Viper Limit", "Activated");
+                telemetry.addData("Viper End Limit", "Activated");
             } else {
-                telemetry.addData("Viper Limit", "Inactive");
+                telemetry.addData("Viper End Limit", "Inactive");
+            }
+
+            // Start limit hit, set power to 0
+            if (digitalTouch.getState() == true) {
+                viperStartPosition = armViper.getCurrentPosition();
+                telemetry.addData("Arm Lift Status", "calibrated");
+                armViperPower = 0;
+                telemetry.addData("Viper Start Limit", "Activated");
+            } else {
+                telemetry.addData("Viper Start Limit", "Inactive");
             }
 
             armLift.setPower(armLiftPower);
