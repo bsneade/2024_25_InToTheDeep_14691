@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-
+@TeleOp
 public class Arm extends LinearOpMode {
 
     private DcMotor armViper = null;
@@ -36,7 +37,7 @@ public class Arm extends LinearOpMode {
         telemetry.update();
 
         // keep track of the viper motor 'start' position so we can calc the end position correctly
-        Integer viperStartPosition = null;
+        int viperStartPosition = armViper.getCurrentPosition();
 
         // Waiting for start
         waitForStart();
@@ -44,7 +45,7 @@ public class Arm extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double armLiftPower = gamepad2.left_stick_y;
-            double armViperPower = gamepad2.right_stick_y;
+            double armViperPower = -gamepad2.right_stick_y;
 
             // Send telemetry message to indicate successful Encoder reset
             telemetry.addData("Viper End Limit",  armViper.getCurrentPosition());
@@ -58,7 +59,7 @@ public class Arm extends LinearOpMode {
             }
 
             // Start limit hit, set power to 0
-            if (digitalTouch.getState() == true) {
+            if (digitalTouch.getState() == false && armViperPower < 0) {
                 viperStartPosition = armViper.getCurrentPosition();
                 telemetry.addData("Arm Lift Status", "calibrated");
                 armViperPower = 0;
@@ -69,6 +70,7 @@ public class Arm extends LinearOpMode {
 
             armLift.setPower(armLiftPower);
             armViper.setPower(armViperPower);
+            telemetry.addData("Arm Viper Current Position", armViper.getCurrentPosition());
             telemetry.addData("Arm Lift Power/ ArmViper Power ", "%4.2f, %4.2f", armLiftPower,armViperPower);
             telemetry.update();
         }
