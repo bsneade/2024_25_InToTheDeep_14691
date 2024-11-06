@@ -69,8 +69,16 @@ public final class MecanumDrive {
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
 
+        public double IN_TO_MM = 24.5; // 1 inch = 25.4 mm
+
         // drive model parameters
-        public double inPerTick = 1;
+        public double TICKS_PER_REV = 537.7;
+        public double WHEEL_RADIUS =
+                104 // mm diameter per spec sheet
+                / IN_TO_MM //convert In
+                / 2; //convert to radius
+        public double WHEEL_CIRC = 2 * Math.PI * WHEEL_RADIUS;
+        public double inPerTick = WHEEL_CIRC / TICKS_PER_REV;
         public double lateralInPerTick = inPerTick;
         public double trackWidthTicks = 0;
 
@@ -224,8 +232,8 @@ public final class MecanumDrive {
 
         // TODO: make sure your config has motors with these names (or change them)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
-        leftBack = hardwareMap.get(DcMotorEx.class, "rearLeft");
+        leftFront = hardwareMap.get(DcMotorEx.class, "rearLeft"); //FIXME - not sure why these are switched for us
+        leftBack = hardwareMap.get(DcMotorEx.class, "frontLeft");
         rightBack = hardwareMap.get(DcMotorEx.class, "rearRight");
         rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
 
@@ -243,7 +251,7 @@ public final class MecanumDrive {
 
         // TODO: make sure this is the same name as your odometry computer
         lazyImu = new LazyImu(hardwareMap, "odo", new RevHubOrientationOnRobot(
-                PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
+                PARAMS.logoFacingDirection, PARAMS.usbFacingDirection)); //FIXME - we may need to figure out the correct orientation
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 

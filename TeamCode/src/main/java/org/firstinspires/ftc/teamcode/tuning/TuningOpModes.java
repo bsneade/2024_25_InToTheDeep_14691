@@ -22,6 +22,9 @@ import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegistrar;
 
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
+import org.firstinspires.ftc.teamcode.GoBildaMockMotorController;
+import org.firstinspires.ftc.teamcode.GoBildaPinpointDcMotorExWrapper;
+import org.firstinspires.ftc.teamcode.GoBildaPinpointLocalizer;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.TankDrive;
 import org.firstinspires.ftc.teamcode.ThreeDeadWheelLocalizer;
@@ -59,6 +62,7 @@ public final class TuningOpModes {
 
                 List<Encoder> leftEncs = new ArrayList<>(), rightEncs = new ArrayList<>();
                 List<Encoder> parEncs = new ArrayList<>(), perpEncs = new ArrayList<>();
+                List<LynxModule> lynxModules = hardwareMap.getAll(LynxModule.class);
                 if (md.localizer instanceof MecanumDrive.DriveLocalizer) {
                     MecanumDrive.DriveLocalizer dl = (MecanumDrive.DriveLocalizer) md.localizer;
                     leftEncs.add(dl.leftFront);
@@ -74,6 +78,12 @@ public final class TuningOpModes {
                     TwoDeadWheelLocalizer dl = (TwoDeadWheelLocalizer) md.localizer;
                     parEncs.add(dl.par);
                     perpEncs.add(dl.perp);
+                } else if (md.localizer instanceof GoBildaPinpointLocalizer) {
+                    GoBildaPinpointLocalizer dl = (GoBildaPinpointLocalizer) md.localizer;
+                    parEncs.add(dl.par);
+                    lynxModules.add(((GoBildaMockMotorController) dl.par.getController()).getLynxModule());
+                    perpEncs.add(dl.perp);
+                    lynxModules.add(((GoBildaMockMotorController) dl.perp.getController()).getLynxModule());
                 } else {
                     throw new RuntimeException("unknown localizer: " + md.localizer.getClass().getName());
                 }
@@ -84,7 +94,7 @@ public final class TuningOpModes {
                         MecanumDrive.PARAMS.maxWheelVel,
                         MecanumDrive.PARAMS.minProfileAccel,
                         MecanumDrive.PARAMS.maxProfileAccel,
-                        hardwareMap.getAll(LynxModule.class),
+                        lynxModules,
                         Arrays.asList(
                                 md.leftFront,
                                 md.leftBack

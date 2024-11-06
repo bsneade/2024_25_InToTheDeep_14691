@@ -25,10 +25,12 @@ package org.firstinspires.ftc.teamcode;
 import static com.qualcomm.robotcore.util.TypeConversion.byteArrayToInt;
 
 import com.qualcomm.hardware.lynx.LynxI2cDeviceSynch;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchDevice;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchSimple;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.QuaternionBasedImuHelper;
 import com.qualcomm.robotcore.hardware.configuration.annotations.DeviceProperties;
 import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
 import com.qualcomm.robotcore.util.TypeConversion;
@@ -48,14 +50,21 @@ import java.nio.ByteOrder;
 import java.util.Arrays;
 
 
+/**
+ * This is the Driver class provided by goBILDA.  It has been modified to work with RoadRunner 1.0.
+ * RoadRunner 1.0 is implemented expecting separate devices for each of the encoder wheels, the IMU,
+ * the Encoders, etc.  To get around that, this class implements all the relevant interfaces.  When
+ * it retrieves the Driver instance from the hardware map, it should always get back the same instance
+ * and be safe.
+ */
 @I2cDeviceType
 @DeviceProperties(
         name = "goBILDA® Pinpoint Odometry Computer",
         xmlTag = "goBILDAPinpoint",
         description ="goBILDA® Pinpoint Odometry Computer (IMU Sensor Fusion for 2 Wheel Odometry)"
         )
-
-public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSimple> implements IMU {
+public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSimple>
+        implements IMU {
 
     private int deviceStatus   = 0;
     private int loopTime       = 0;
@@ -67,9 +76,15 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
     private float xVelocity    = 0;
     private float yVelocity    = 0;
     private float hVelocity    = 0;
+    private EncoderDirection xEncoderDirection = EncoderDirection.FORWARD; //default to forward
+    private EncoderDirection yEncoderDirection = EncoderDirection.FORWARD; //default to forward
 
     private static final float goBILDA_SWINGARM_POD = 13.26291192f; //ticks-per-mm for the goBILDA Swingarm Pod
     private static final float goBILDA_4_BAR_POD    = 19.89436789f; //ticks-per-mm for the goBILDA 4-Bar Pod
+
+    //FIXME - no idea if these are correct based on our gobilda hardware
+    private QuaternionBasedImuHelper quaternionBasedImuHelper =
+            new QuaternionBasedImuHelper(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
 
     //i2c address of the device
     public static final byte DEFAULT_ADDRESS = 0x31;
@@ -79,23 +94,6 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
 
         this.deviceClient.setI2cAddress(I2cAddr.create7bit(DEFAULT_ADDRESS));
         super.registerArmingStateCallback(false);
-    }
-
-
-    @Override
-    public Manufacturer getManufacturer() {
-        return Manufacturer.Other;
-    }
-
-    @Override
-    protected synchronized boolean doInitialize() {
-        ((LynxI2cDeviceSynch)(deviceClient)).setBusSpeed(LynxI2cDeviceSynch.BusSpeed.FAST_400K);
-        return true;
-    }
-
-    @Override
-    public String getDeviceName() {
-        return "goBILDA® Pinpoint Odometry Computer";
     }
 
     /**
@@ -125,12 +123,28 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
 
     @Override
     public Quaternion getRobotOrientationAsQuaternion() {
-        throw new UnsupportedOperationException("Not implemented");
+        return quaternionBasedImuHelper.getRobotOrientationAsQuaternion("GoBildaPinpointDriver", null, false)
     }
 
     @Override
     public AngularVelocity getRobotAngularVelocity(AngleUnit angleUnit) {
         throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public Manufacturer getManufacturer() {
+        return Manufacturer.Other;
+    }
+
+    @Override
+    protected synchronized boolean doInitialize() {
+        ((LynxI2cDeviceSynch)(deviceClient)).setBusSpeed(LynxI2cDeviceSynch.BusSpeed.FAST_400K);
+        return true;
+    }
+
+    @Override
+    public String getDeviceName() {
+        return "goBILDA® Pinpoint Odometry Computer";
     }
 
     //Register map of the i2c device
@@ -354,12 +368,23 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
      * @param yEncoder FORWARD or REVERSED, Y (strafe) pod should increase when the robot is moving left
      */
     public void setEncoderDirections(EncoderDirection xEncoder, EncoderDirection yEncoder){
+        xEncoderDirection = xEncoder;
         if (xEncoder == EncoderDirection.REVERSED) {
             writeInt(Register.DEVICE_CONTROL,1<<4);
         }
+        yEncoderDirection = yEncoder;
         if (yEncoder == EncoderDirection.REVERSED){
             writeInt(Register.DEVICE_CONTROL,1<<2);
         }
+    }
+
+    //FIXME - read these values out of the Register instead of keeping them as private variables
+    public int getEncoderDirectionX() {
+        return xEncoderDirection.ordinal();
+    }
+
+    public int getEncoderDirectionY() {
+        return yEncoderDirection.ordinal();
     }
 
     /**

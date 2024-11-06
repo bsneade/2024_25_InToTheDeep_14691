@@ -7,7 +7,11 @@ import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.Vector2dDual;
+import com.acmerobotics.roadrunner.ftc.Encoder;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
+import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
+import com.acmerobotics.roadrunner.ftc.RawEncoder;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -26,9 +30,12 @@ public class GoBildaPinpointLocalizer implements Localizer {
 
     public final GoBildaPinpointDriver driver;
 
+    public final Encoder par, perp;
+
     private Pose2D lastPosition;
     private Pose2D lastVelocity;
     private Double lastHeading;
+
 
     public GoBildaPinpointLocalizer(HardwareMap hardwareMap) {
         // TODO - make sure the device name for pinpoint controller is set correctly
@@ -46,6 +53,18 @@ public class GoBildaPinpointLocalizer implements Localizer {
         driver.resetPosAndIMU();
 
         FlightRecorder.write("GOBILDA_PINPOINT_PARAMS", PARAMS);
+
+        //Hack the encoders interface
+        par = new OverflowEncoder(
+                new RawEncoder(
+                new GoBildaPinpointDcMotorExWrapper(driver, // pretend the Driver is an Encoder/Motor to fool the interface
+                        GoBildaPinpointDcMotorExWrapper.MountDirection.PARALLEL)) // tell the wrapper which direction we care about
+             );
+        perp = new OverflowEncoder(
+                new RawEncoder(
+                new GoBildaPinpointDcMotorExWrapper(driver, // pretend the Driver is an Encoder/Motor to fool the interface
+                        GoBildaPinpointDcMotorExWrapper.MountDirection.PERPENDICULAR)) // tell the wrapper which direction we care about
+             );
     }
 
     @Override
