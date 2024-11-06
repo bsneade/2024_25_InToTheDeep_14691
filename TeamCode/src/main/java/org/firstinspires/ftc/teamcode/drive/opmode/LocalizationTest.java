@@ -5,7 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.drive.GoBildaPinpointLocalizer;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+
+import java.util.List;
 
 /**
  * This is a simple teleop routine for testing localization. Drive the robot around like a normal
@@ -34,6 +37,13 @@ public class LocalizationTest extends LinearOpMode {
             );
 
             drive.update();
+            ((GoBildaPinpointLocalizer) drive.getLocalizer()).update();
+
+            List<Double> positions = ((GoBildaPinpointLocalizer) drive.getLocalizer()).getWheelPositions();
+            telemetry.addData("localizer",  drive.getLocalizer().getClass());
+            telemetry.addData("x pos", positions.get(0));
+            telemetry.addData("y pos", positions.get(1));
+
 
             Pose2d poseEstimate = drive.getPoseEstimate();
             telemetry.addData("x", poseEstimate.getX());
