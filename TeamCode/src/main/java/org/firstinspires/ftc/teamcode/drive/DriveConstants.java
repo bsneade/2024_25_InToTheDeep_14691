@@ -50,7 +50,7 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS =
             104 // mm diameter per spec sheet
-            * IN_TO_MM //convert In
+            / IN_TO_MM //convert In
             / 2; //convert to radius
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
     public static double TRACK_WIDTH = 16 //measured robot width
