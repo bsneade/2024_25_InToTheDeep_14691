@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import androidx.annotation.Dimension;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -34,6 +35,7 @@ import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
 import com.acmerobotics.roadrunner.ftc.Encoder;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
+import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.acmerobotics.roadrunner.ftc.LazyImu;
 import com.acmerobotics.roadrunner.ftc.LynxFirmware;
 import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
@@ -48,6 +50,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.messages.DriveCommandMessage;
 import org.firstinspires.ftc.teamcode.messages.MecanumCommandMessage;
@@ -70,14 +73,16 @@ public class MecanumDrive {
                 RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
         // drive model parameters
-        public double inPerTick = 1; // SparkFun OTOS Note: you can probably leave this at 1
+//        public double wheelCircumference = DistanceUnit.INCH.fromMm(48) * Math.PI; // diameter from https://www.gobilda.com/swingarm-odometry-pod-48mm-wheel/
+//        public double inPerTick = wheelCircumference / 2000; // ticks per rev from https://www.gobilda.com/swingarm-odometry-pod-48mm-wheel/
+        public double inPerTick = 1;
         public double lateralInPerTick = inPerTick;
         public double trackWidthTicks = 0;
 
         // feedforward parameters (in tick units)
-        public double kS = 0;
-        public double kV = 0;
-        public double kA = 0;
+        public double kS = 1;
+        public double kV = 1;
+        public double kA = 0.0000001;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 50;
