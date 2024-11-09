@@ -22,8 +22,11 @@ import org.firstinspires.ftc.teamcode.messages.PoseMessage;
  */
 public class PinpointDrive extends MecanumDrive {
     public static class Params {
-        public double TRACK_WIDTH = 16 //measured robot width
-                -1.486;//Wheel width from spec sheet // in
+//        public double TRACK_WIDTH = 16 //measured robot width
+//                -1.486;//Wheel width from spec sheet // in
+        // NOTE: we have the REV internal IMU (BNO55), so make sure it is set correctly in the robot configuration.
+        //  if it is not set correctly, then the data won't work for the RR Dead Wheel Angular Ramp Regression
+        public double TRACK_WIDTH = 12.748118517268678; // measured with the AngularRampLogger
 
         /*
         Set the odometry pod positions relative to the point that the odometry computer tracks around.

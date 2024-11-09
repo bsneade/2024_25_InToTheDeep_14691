@@ -75,14 +75,15 @@ public class MecanumDrive {
         // drive model parameters
 //        public double wheelCircumference = DistanceUnit.INCH.fromMm(48) * Math.PI; // diameter from https://www.gobilda.com/swingarm-odometry-pod-48mm-wheel/
 //        public double inPerTick = wheelCircumference / 2000; // ticks per rev from https://www.gobilda.com/swingarm-odometry-pod-48mm-wheel/
-        public double inPerTick = 1;
+        public double inPerTick = 108 / // 108 in manually pushed
+            108.9682;
         public double lateralInPerTick = inPerTick;
         public double trackWidthTicks = 0;
 
         // feedforward parameters (in tick units)
-        public double kS = 1;
-        public double kV = 1;
-        public double kA = 0.0000001;
+        public double kS = 1.3637521724610107;
+        public double kV = 0.19097015729175076;
+        public double kA = 0.00001;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 50;
@@ -94,9 +95,9 @@ public class MecanumDrive {
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 0.0;
-        public double lateralGain = 0.0;
-        public double headingGain = 0.0; // shared with turn
+        public double axialGain = 4;
+        public double lateralGain = 5;
+        public double headingGain = 5; // shared with turn
 
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
