@@ -1,4 +1,6 @@
 package org.firstinspires.ftc.teamcode.mm14691;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -9,6 +11,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.teamcode.PinpointDrive;
+
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import java.util.Locale;
@@ -18,12 +22,6 @@ import java.util.Locale;
 public class ManualDrive extends LinearOpMode {
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftFrontDrive = null;
-    private DcMotor leftBackDrive = null;
-    private DcMotor rightFrontDrive = null;
-    private DcMotor rightBackDrive = null;
-
-    private GoBildaPinpointDriver odo = null;// Declare OpMode member for the Odometry Computer
     private DcMotor armViper = null;
     private DcMotor armLift= null;
 
@@ -40,28 +38,11 @@ public class ManualDrive extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // Initialize the drive motors
-        leftFrontDrive = hardwareMap.get(DcMotor.class, "frontLeft");
-        leftBackDrive = hardwareMap.get(DcMotor.class, "rearLeft");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "frontRight");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "rearRight");
         armLift = hardwareMap.get(DcMotor.class, "armLift");
         armViper = hardwareMap.get(DcMotor.class, "armViper");
 
-        // TODO need to change the offset here for gamerobot
-        // Initialize the hardware variables. Note that the strings used here must correspond
-        // to the names assigned during the robot configuration step on the DS or RC devices.
-        odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
-        odo.setOffsets(-84.0, -168.0); //these are tuned for 3110-0002-0001 Product Insight #1
-        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
-        odo.resetPosAndIMU();
+        PinpointDrive drive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
 
-        // Set the directions for the motors
-        //TODO may need to adjust these
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
         armLift.setDirection(DcMotorSimple.Direction.FORWARD);
         armViper.setDirection(DcMotorSimple.Direction.FORWARD);
 
@@ -79,10 +60,10 @@ public class ManualDrive extends LinearOpMode {
         // Set up the telemetry
         telemetry.addData("ODO Status", "Initialized");
         telemetry.addData("Status", "Initialized");
-        telemetry.addData("X offset", odo.getXOffset());
-        telemetry.addData("Y offset", odo.getYOffset());
-        telemetry.addData("Device Version Number:", odo.getDeviceVersion());
-        telemetry.addData("Device Scalar", odo.getYawScalar());
+        telemetry.addData("X offset", drive.pinpoint.getXOffset());
+        telemetry.addData("Y offset", drive.pinpoint.getYOffset());
+        telemetry.addData("Device Version Number:", drive.pinpoint.getDeviceVersion());
+        telemetry.addData("Device Scalar", drive.pinpoint.getYawScalar());
         telemetry.addData("Arm Lift Status", "initialized");
         telemetry.addData("Viper starting position",  armViper.getCurrentPosition());
         telemetry.update();
@@ -97,8 +78,7 @@ public class ManualDrive extends LinearOpMode {
 
 //            Request an update from the Pinpoint odometry computer. This checks almost all outputs
 //            from the device in a single I2C read.
-
-            odo.update();
+            PoseVelocity2d poseVelocity2d=drive.updatePoseEstimate();
 
             //Check button state
             double axial = -gamepad1.left_stick_y;
@@ -125,27 +105,27 @@ public class ManualDrive extends LinearOpMode {
                 leftBackPower   /= max;
                 rightBackPower  /= max;
             }
-            leftFrontDrive.setPower(leftFrontPower);
-            rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(rightBackPower);
+            drive.leftFront.setPower(leftFrontPower);
+            drive.rightFront.setPower(rightFrontPower);
+            drive.leftBack.setPower(leftBackPower);
+            drive.rightBack.setPower(rightBackPower);
 
 //            gets the current Position (x & y in mm, and heading in degrees) of the robot, and prints it.
-            Pose2D pos = odo.getPosition();
+            Pose2D pos = drive.pinpoint.getPosition();
             String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}",
                     pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
             telemetry.addData("Position", data);
 
 //            gets the current Velocity (x & y in mm/sec and heading in degrees/sec) and prints it.
-            Pose2D vel = odo.getVelocity();
+            Pose2D vel = drive.pinpoint.getVelocity();
             String velocity = String.format(Locale.US,"{XVel: %.3f, YVel: %.3f, HVel: %.3f}",
                     vel.getX(DistanceUnit.MM), vel.getY(DistanceUnit.MM), vel.getHeading(AngleUnit.DEGREES));
             telemetry.addData("Velocity", velocity);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("ODO Status", odo.getDeviceStatus());
-            telemetry.addData("Pinpoint Frequency", odo.getFrequency()); //prints/gets the current refresh rate of the Pinpoint
+            telemetry.addData("ODO Status", drive.pinpoint.getDeviceStatus());
+            telemetry.addData("Pinpoint Frequency", drive.pinpoint.getFrequency()); //prints/gets the current refresh rate of the Pinpoint
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.update();
