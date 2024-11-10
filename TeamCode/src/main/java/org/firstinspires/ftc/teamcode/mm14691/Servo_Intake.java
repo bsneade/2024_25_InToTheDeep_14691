@@ -68,7 +68,7 @@ public class Servo_Intake extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
-
+        while (opModeIsActive()){
                     /* Here we handle the three buttons that have direct control of the intake speed.
             These control the continuous rotation servo that pulls elements into the robot,
             If the user presses A, it sets the intake power to the final variable that
@@ -134,18 +134,19 @@ public class Servo_Intake extends LinearOpMode {
             wrist.setPosition(WRIST_FOLDED_IN);
         }
 
-        else if (gamepad1.dpad_up){
+        else if (gamepad2.dpad_up){
             /* This sets the arm to vertical to hook onto the LOW RUNG for hanging */
 //            armPosition = ARM_ATTACH_HANGING_HOOK;
             intake.setPower(INTAKE_OFF);
             wrist.setPosition(WRIST_FOLDED_IN);
         }
 
-        else if (gamepad1.dpad_down){
+        else if (gamepad2.dpad_down){
             /* this moves the arm down to lift the robot up once it has been hooked */
 //            armPosition = ARM_WINCH_ROBOT;
             intake.setPower(INTAKE_OFF);
             wrist.setPosition(WRIST_FOLDED_IN);
         }
     }
+}
 }
