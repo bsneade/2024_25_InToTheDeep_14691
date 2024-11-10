@@ -56,10 +56,15 @@ public class ManualDrive extends LinearOpMode {
         armLift = hardwareMap.get(DcMotor.class, "armLift");
         armViper = hardwareMap.get(DcMotor.class, "armViper");
 
+        armLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armViper.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         PinpointDrive drive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
 
-        armLift.setDirection(DcMotorSimple.Direction.FORWARD);
+        armLift.setDirection(DcMotorSimple.Direction.REVERSE);
         armViper.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        //set power behavior
 
         //This will make sure that each time you hit run it starts at 0
         armViper.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -225,14 +230,14 @@ public class ManualDrive extends LinearOpMode {
                 wrist.setPosition(WRIST_FOLDED_IN);
             }
 
-            else if (gamepad1.dpad_up){
+            else if (gamepad2.dpad_up){
                 /* This sets the arm to vertical to hook onto the LOW RUNG for hanging */
 //            armPosition = ARM_ATTACH_HANGING_HOOK;
                 intake.setPower(INTAKE_OFF);
                 wrist.setPosition(WRIST_FOLDED_IN);
             }
 
-            else if (gamepad1.dpad_down){
+            else if (gamepad2.dpad_down){
                 /* this moves the arm down to lift the robot up once it has been hooked */
 //            armPosition = ARM_WINCH_ROBOT;
                 intake.setPower(INTAKE_OFF);
