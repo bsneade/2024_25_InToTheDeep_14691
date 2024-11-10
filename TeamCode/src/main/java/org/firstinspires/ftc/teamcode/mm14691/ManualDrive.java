@@ -123,9 +123,9 @@ public class ManualDrive extends LinearOpMode {
             //Down:-1,0,0
             //Right:0,-1,0
             //calculation of power to motor
-            double leftFrontPower  = axial - lateral + yaw;
+            double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower   = axial + lateral + yaw;
+            double leftBackPower   = axial - lateral + yaw;
             double rightBackPower  = axial + lateral - yaw;
             //Send power to wheels
             double max;
