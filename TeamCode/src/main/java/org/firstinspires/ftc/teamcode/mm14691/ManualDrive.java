@@ -5,7 +5,9 @@ import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -21,6 +23,19 @@ import java.util.Locale;
 
 public class ManualDrive extends LinearOpMode {
     // Declare OpMode members for each of the 4 motors.
+    // Define class members
+    public CRServo intake      = null; //the active intake servo
+    public Servo wrist       = null; //the wrist servo
+
+    /* Variables to store the speed the intake servo should be set at to intake, and deposit game elements. */
+    final double INTAKE_COLLECT    = -1.0;
+    final double INTAKE_OFF        =  0.0;
+    final double INTAKE_DEPOSIT    =  0.5;
+
+    //TODO NEED TO CHANGE TO OUR SETTINGS
+    // * Variables to store the positions that the wrist should be set to when folding in, or folding out. */
+    final double WRIST_FOLDED_IN   = 0.8333;
+    final double WRIST_FOLDED_OUT  = 0.5;
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor armViper = null;
     private DcMotor armLift= null;
@@ -69,8 +84,19 @@ public class ManualDrive extends LinearOpMode {
         telemetry.update();
         // keep track of the viper motor 'start' position so we can calc the end position correctly
         int viperStartPosition = armViper.getCurrentPosition();
+        /* Define and initialize servos.*/
+        intake = hardwareMap.get(CRServo.class, "intake");
+        wrist  = hardwareMap.get(Servo.class, "wrist");
+
+        /* Make sure that the intake is off, and the wrist is folded in. */
+        intake.setPower(INTAKE_OFF);
+        wrist.setPosition(WRIST_FOLDED_IN);
+
+        telemetry.addData(">", "Press Start to scan Servo.");
+        telemetry.update();
 
         // Waiting for start
+
         waitForStart();
         runtime.reset();
 
@@ -170,6 +196,48 @@ public class ManualDrive extends LinearOpMode {
             armViper.setPower(armViperPower);
             telemetry.addData("Arm Viper Current Position", armViper.getCurrentPosition());
             telemetry.addData("Arm Lift Power/ ArmViper Power ", "%4.2f, %4.2f", armLiftPower,armViperPower);
+            // starts intake configuration
+            if (gamepad2.a) {
+                intake.setPower(INTAKE_COLLECT);
+            }
+            else if (gamepad2.x) {
+                intake.setPower(INTAKE_OFF);
+            }
+            else if (gamepad2.b) {
+                intake.setPower(INTAKE_DEPOSIT);
+            }
+            if(gamepad2.right_bumper){
+                /* This is the intaking/collecting arm position */
+//            armPosition = ARM_COLLECT;
+                wrist.setPosition(WRIST_FOLDED_OUT);
+                intake.setPower(INTAKE_COLLECT);
+            }
+            else if (gamepad2.dpad_left) {
+                    /* This turns off the intake, folds in the wrist, and moves the arm
+                    back to folded inside the robot. This is also the starting configuration */
+//            armPosition = ARM_COLLAPSED_INTO_ROBOT;
+                intake.setPower(INTAKE_OFF);
+                wrist.setPosition(WRIST_FOLDED_IN);
+            }
+            else if (gamepad2.dpad_right){
+                /* This is the correct height to score SPECIMEN on the HIGH CHAMBER */
+//            armPosition = ARM_SCORE_SPECIMEN;
+                wrist.setPosition(WRIST_FOLDED_IN);
+            }
+
+            else if (gamepad1.dpad_up){
+                /* This sets the arm to vertical to hook onto the LOW RUNG for hanging */
+//            armPosition = ARM_ATTACH_HANGING_HOOK;
+                intake.setPower(INTAKE_OFF);
+                wrist.setPosition(WRIST_FOLDED_IN);
+            }
+
+            else if (gamepad1.dpad_down){
+                /* this moves the arm down to lift the robot up once it has been hooked */
+//            armPosition = ARM_WINCH_ROBOT;
+                intake.setPower(INTAKE_OFF);
+                wrist.setPosition(WRIST_FOLDED_IN);
+            }
             telemetry.update();
 
 
