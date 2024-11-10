@@ -86,6 +86,7 @@ public class ManualDrive extends LinearOpMode {
         telemetry.addData("Device Scalar", drive.pinpoint.getYawScalar());
         telemetry.addData("Arm Lift Status", "initialized");
         telemetry.addData("Viper starting position",  armViper.getCurrentPosition());
+        //updates telemetry after every iteration
         telemetry.update();
         // keep track of the viper motor 'start' position so we can calc the end position correctly
         int viperStartPosition = armViper.getCurrentPosition();
@@ -96,13 +97,14 @@ public class ManualDrive extends LinearOpMode {
         /* Make sure that the intake is off, and the wrist is folded in. */
         intake.setPower(INTAKE_OFF);
         wrist.setPosition(WRIST_FOLDED_IN);
-
+        //Add data to start servo
         telemetry.addData(">", "Press Start to scan Servo.");
         telemetry.update();
 
         // Waiting for start
 
         waitForStart();
+        //restarts runtime
         runtime.reset();
 
         while (opModeIsActive()){
@@ -120,6 +122,7 @@ public class ManualDrive extends LinearOpMode {
             //Left:0,1,0
             //Down:-1,0,0
             //Right:0,-1,0
+            //calculation of power to motor
             double leftFrontPower  = axial - lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
             double leftBackPower   = axial + lateral + yaw;
@@ -136,12 +139,14 @@ public class ManualDrive extends LinearOpMode {
                 leftBackPower   /= max;
                 rightBackPower  /= max;
             }
+            //sets power to motors
             drive.leftFront.setPower(leftFrontPower);
             drive.rightFront.setPower(rightFrontPower);
             drive.leftBack.setPower(leftBackPower);
             drive.rightBack.setPower(rightBackPower);
 
 //            gets the current Position (x & y in mm, and heading in degrees) of the robot, and prints it.
+            //adds telemetry updates when driving
             Pose2D pos = drive.pinpoint.getPosition();
             String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}",
                     pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
@@ -161,6 +166,7 @@ public class ManualDrive extends LinearOpMode {
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.update();
 //below is the arm code
+            //for the joystick pressed, moves the
             double armLiftPower = gamepad2.left_stick_y;
             double armViperPower = -gamepad2.right_stick_y;
 
@@ -196,12 +202,14 @@ public class ManualDrive extends LinearOpMode {
 
             //To change the speed of the motor, it looks something like this: (You can adjust the 4000 down to say 500 and it will move much slower)
             //((DcMotorEx) LiftMotor).setVelocity(4000);
-
+            //tells about current power of arm
             armLift.setPower(armLiftPower);
             armViper.setPower(armViperPower);
+            //adds current position of arm
             telemetry.addData("Arm Viper Current Position", armViper.getCurrentPosition());
             telemetry.addData("Arm Lift Power/ ArmViper Power ", "%4.2f, %4.2f", armLiftPower,armViperPower);
             // starts intake configuration
+            // intake collection
             if (gamepad2.a) {
                 intake.setPower(INTAKE_COLLECT);
             }
@@ -214,6 +222,8 @@ public class ManualDrive extends LinearOpMode {
             if(gamepad2.right_bumper){
                 /* This is the intaking/collecting arm position */
 //            armPosition = ARM_COLLECT;
+
+
                 wrist.setPosition(WRIST_FOLDED_OUT);
                 intake.setPower(INTAKE_COLLECT);
             }
@@ -243,6 +253,7 @@ public class ManualDrive extends LinearOpMode {
                 intake.setPower(INTAKE_OFF);
                 wrist.setPosition(WRIST_FOLDED_IN);
             }
+            // updates telemetry after everything
             telemetry.update();
 
 
