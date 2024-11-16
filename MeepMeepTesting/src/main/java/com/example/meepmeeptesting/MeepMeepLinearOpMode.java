@@ -1,14 +1,4 @@
-package com.example.meepmeeplinearopmode;
-
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-
-import org.rowlandhall.meepmeep.MeepMeep;
-import org.rowlandhall.meepmeep.roadrunner.DefaultBotBuilder;
-import org.rowlandhall.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
-
-public class MeepMeepLinearOpMode {
-}
-package com.example.meepmeeptesting.MeepMeepLinearOpMode;
+package com.example.meepmeeptesting;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
