@@ -1,7 +1,12 @@
 package org.firstinspires.ftc.teamcode.mm14691;
 
+import static com.acmerobotics.roadrunner.ftc.Actions.runBlocking;
+
+import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.PinpointDrive;
@@ -12,17 +17,18 @@ public class MMAuto extends LinearOpMode {
         PinpointDrive drive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
         telemetry.update();
 
+        // Configure our paths
+        Action action = drive.actionBuilder(new Pose2d(-47, -46, 0))
+                .lineToX(94-47).build();
+
         // Waiting for start
-
         waitForStart();
-        //restarts runtime
 
-        while (opModeIsActive()) {
-
-//            Request an update from the Pinpoint odometry computer. This checks almost all outputs
-//            from the device in a single I2C read.
-            PoseVelocity2d poseVelocity2d = drive.updatePoseEstimate();
-
+        if (isStopRequested()) {
+            return;
         }
+
+        runBlocking(action);
+
     }
 }
