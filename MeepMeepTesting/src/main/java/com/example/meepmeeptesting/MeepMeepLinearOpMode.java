@@ -6,7 +6,7 @@ import org.rowlandhall.meepmeep.MeepMeep;
 import org.rowlandhall.meepmeep.roadrunner.DefaultBotBuilder;
 import org.rowlandhall.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
-public class MeepMeepTest {
+class MeepMeepLinearOpMode {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(865);
 
