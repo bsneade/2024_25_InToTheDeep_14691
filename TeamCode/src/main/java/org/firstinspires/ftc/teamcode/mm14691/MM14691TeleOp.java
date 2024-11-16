@@ -31,7 +31,9 @@ public class MM14691TeleOp extends MM14691BaseOpMode {
         if (runningActions.stream().noneMatch(action -> action instanceof ArmDrive.ViperToEnd) &&
                 runningActions.stream().noneMatch(action -> action instanceof ArmDrive.ViperToStart)) {
             runningActions.add(armDrive.setViperPower(gamepad2.right_stick_y));
-            telemetry.addData("DEBUG: VIPER POWER", gamepad2.right_stick_y);
+            if (ArmDrive.PARAMS.debugOn) {
+                telemetry.addData("DEBUG: VIPER POWER", gamepad2.right_stick_y);
+            }
 
             if (gamepad2.right_bumper) { //send to max extension
                 runningActions.add(armDrive.viperToEnd());
@@ -49,12 +51,44 @@ public class MM14691TeleOp extends MM14691BaseOpMode {
             }
         }
 
+        // Create actions for the list arm
+        // Once a lift button is pushed, only run that until completion.  This checks if
+        // there is already a button based action in the running actions list.
+        if (runningActions.stream().noneMatch(action -> action instanceof ArmDrive.LiftToDown)) {
+            runningActions.add(armDrive.setLiftPower(gamepad2.left_stick_y));
+            if (ArmDrive.PARAMS.debugOn) {
+                telemetry.addData("DEBUG: LIFT POWER", gamepad2.left_stick_y);
+            }
 
-        // TODO: Create actions for the swing arm
+            if (gamepad2.left_trigger > 0) {
+//                runningActions.add(armDrive.liftToDown()); FIXME - need to renable this
+                // clear the ViperPower so it doesn't conflict
+                runningActions = runningActions.stream().filter(
+                        action -> !(action instanceof ArmDrive.LiftPower)
+                ).collect(Collectors.toList());
+            }
+        }
 
-        // TODO: Create actions for the wrist
+        // Create actions for the wrist
+        if (gamepad2.a) { //Turn on the wheel for collection
+            runningActions.add(armDrive.setIntakePower(ArmDrive.PARAMS.intakeCollect));
+        }
+        if (gamepad2.x) { //Turn off the wheel
+            runningActions.add(armDrive.setIntakePower(ArmDrive.PARAMS.intakeOff));
+        }
+        if (gamepad2.b) { //Turn on the wheel for deposit
+            runningActions.add(armDrive.setIntakePower(ArmDrive.PARAMS.intakeDeposit));
+        }
 
-        // TODO: Create actions for the ascension arm
+        // Create actions for the ascension arm
+        if (gamepad2.dpad_up) {
+            runningActions.add(armDrive.setAscensionPower(.5));
+        } else if (gamepad2.dpad_down) {
+            runningActions.add(armDrive.setAscensionPower(-.5));
+        }else {
+            runningActions.add(armDrive.setAscensionPower(0));
+        }
+
         telemetry.addData("Arm Drive", "Active");
 
         // Add some debug about the actions we are about to run.

@@ -61,7 +61,13 @@ public abstract class MM14691BaseOpMode extends OpMode {
         runningActions.add(armDrive.getDebugAction());
 
         //Retract the viper arm to the limit switch
-        runningActions.add(armDrive.viperToStart()); //retract the viper to the start
+        runningActions.add(armDrive.viperToStart());
+
+        //Move the lift arm to the 'down' position
+//        runningActions.add(armDrive.liftToDown());
+
+        //Fold the wrist in
+        runningActions.add(armDrive.intakeReady());
 
         // Run our actions before we start the loop
         updateRunningActions(packet);
@@ -87,6 +93,7 @@ public abstract class MM14691BaseOpMode extends OpMode {
     /**
      * Sets the drive powers based on the specified PoseVelocity (comes from the gamepad).
      * See Tuning.setDrivePowers.
+     * TODO add the rotation back in
      *
      * @param powers
      */
