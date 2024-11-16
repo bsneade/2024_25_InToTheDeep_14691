@@ -74,10 +74,8 @@ public class MecanumDrive {
                 RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
         // drive model parameters
-//        public double wheelCircumference = DistanceUnit.INCH.fromMm(48) * Math.PI; // diameter from https://www.gobilda.com/swingarm-odometry-pod-48mm-wheel/
-//        public double inPerTick = wheelCircumference / 2000; // ticks per rev from https://www.gobilda.com/swingarm-odometry-pod-48mm-wheel/
         public double inPerTick = 108 / // 108 in manually pushed
-            108.9682;
+            108.9682; // Set from tuning
         public double lateralInPerTick = inPerTick;
         public double trackWidthTicks = 0;
 
@@ -103,8 +101,6 @@ public class MecanumDrive {
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
         public double headingVelGain = 0.0; // shared with turn
-
-        public int VIPER_LIMIT = 4500;
 
     }
 

@@ -72,10 +72,9 @@ public class Arm extends LinearOpMode {
             telemetry.addData("Viper Current Position",armViper.getCurrentPosition());
             telemetry.addData("Viper Start Positin",viperStartPosition);
             telemetry.addData("ArmViperPower",armViperPower);
-            telemetry.update();
 
             // End limit hit, set power to 0;TODO temporary comment out to test the Viper Position
-//            if (armViper.getCurrentPosition() - viperStartPosition >= VIPER_LIMIT) {
+//            if (armViper.getCurrentPosition() - viperStartPosition >= viperLimit) {
 //                armViperPower = VIPER_HOLD_POWER;
 //                telemetry.addData("Viper End Limit", "Activated");
 //            } else {
